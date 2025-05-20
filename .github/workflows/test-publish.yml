@@ -56,4 +56,4 @@ jobs:
       - name: Build packages
         run: pnpm run build
       - name: Release packages
-        run: pnpm run release
+        run: pnpm release
