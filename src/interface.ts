@@ -1,6 +1,12 @@
 import HID from "node-hid";
-import { isDCTTechRelay } from "./utils.js";
-import { HidRelayBoard, ListHidRelayBoardsOptions } from "./types.js";
+import { isDCTTechRelay, openHidDevice } from "./utils.js";
+import {
+  HidRelayBoard,
+  HidRelayBoardConnectionOptions,
+  ListHidRelayBoardsOptions,
+} from "./types.js";
+import { COMMAND_ON } from "./constants.js";
+import { COMMAND_OFF } from "./constants.js";
 
 /**
  * List all HID USB relay boards available on the system along with the state they are currently in.
@@ -38,9 +44,7 @@ export const listHidRelayBoards = async ({
               }
 
               // Open a connection to the relay and get the feature report to get the serial number and state
-              relay = device.path
-                ? await HID.HIDAsync.open(device.path)
-                : await HID.HIDAsync.open(device.vendorId, device.productId);
+              relay = await openHidDevice(device);
               const featureReport = await relay.getFeatureReport(0x01, 0x08);
               const serialNumber = featureReport
                 .subarray(0, 5)
@@ -71,4 +75,22 @@ export const listHidRelayBoards = async ({
 
   // Return the relay boards that were successfully opened and had state
   return relayBoards.filter((board) => !!board);
+};
+
+/**
+ * Set the state of a relay on a HID relay board
+ * Note: This function will not check that the relay index is valid as some relays do not report the number of relays available
+ */
+export const setHidRelayState = async (
+  board: HidRelayBoardConnectionOptions,
+  relayIndex: number,
+  state: boolean,
+): Promise<void> => {
+  let relay: HID.HIDAsync | undefined = undefined;
+  try {
+    relay = await openHidDevice(board);
+    await relay.write([0x00, state ? COMMAND_ON : COMMAND_OFF, relayIndex + 1]);
+  } finally {
+    relay?.close();
+  }
 };
