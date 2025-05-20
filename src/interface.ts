@@ -5,7 +5,7 @@ import {
   HidRelayBoardConnectionOptions,
   ListHidRelayBoardsOptions,
 } from "./types.js";
-import { COMMAND_ON } from "./constants.js";
+import { COMMAND_ON, COMMAND_SET_SERIAL } from "./constants.js";
 import { COMMAND_OFF } from "./constants.js";
 
 /**
@@ -90,6 +90,35 @@ export const setHidRelayState = async (
   try {
     relay = await openHidDevice(board);
     await relay.write([0x00, state ? COMMAND_ON : COMMAND_OFF, relayIndex + 1]);
+  } finally {
+    relay?.close();
+  }
+};
+
+/**
+ * Set the serial number of a HID relay board
+ */
+export const setHidRelaySerialNumber = async (
+  board: HidRelayBoardConnectionOptions,
+  serialNumber: string,
+): Promise<void> => {
+  let relay: HID.HIDAsync | undefined = undefined;
+  try {
+    const serialNumberBuffer = Buffer.from(serialNumber, "ascii");
+    if (serialNumberBuffer.length > 5) {
+      throw new Error("Serial number must be less than 5 characters");
+    }
+
+    const fixedLengthSerialNumberBuffer = Buffer.alloc(5);
+    fixedLengthSerialNumberBuffer.fill(0);
+    serialNumberBuffer.copy(fixedLengthSerialNumberBuffer, 0, 0);
+
+    relay = await openHidDevice(board);
+    await relay.write([
+      0x0,
+      COMMAND_SET_SERIAL,
+      ...fixedLengthSerialNumberBuffer,
+    ]);
   } finally {
     relay?.close();
   }

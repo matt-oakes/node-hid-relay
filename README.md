@@ -12,6 +12,8 @@ A Node.JS library which can control a USB relay device using the HID interface.
 
 ### List all relay boards
 
+Return a list of all the currently connected HID USB Relay boards. By default, the state of each relay on the board is also fetched, but this can be turned off by setting the `fetchState` option to `false`.
+
 ```ts
 import { listHidRelayBoards } from "node-hid-relay";
 
@@ -26,6 +28,8 @@ for (const board of relayBoards) {
 
 ### Set the state of a relay
 
+Set the state of a relay on a HID USB Relay board. Note that this function will not check that the relay index is valid as some relays do not report the number of relays available.
+
 ```ts
 import { listHidRelayBoards, setHidRelayState } from "node-hid-relay";
 
@@ -37,6 +41,20 @@ await setHidRelayState(relayBoards[0], 0, true);
 
 // Turn the first relay on the first board off
 await setHidRelayState(relayBoards[0], 0, false);
+```
+
+### Set the serial number of a relay board
+
+Set the serial number of a HID USB Relay board. Note that the serial number must contain only ascii characters and must be 5 characters or less.
+
+```ts
+import { listHidRelayBoards, setHidRelaySerialNumber } from "node-hid-relay";
+
+// Get the relay boards
+const relayBoards = await listHidRelayBoards();
+
+// Set the serial number of the first relay board
+await setHidRelaySerialNumber(relayBoards[0], "BRD01");
 ```
 
 ## See Also
