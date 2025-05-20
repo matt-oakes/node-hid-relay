@@ -1,6 +1,6 @@
 {
   "name": "hid-relay",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Connect to and control USB relays through the HID interface",
   "keywords": [
     "usb",
