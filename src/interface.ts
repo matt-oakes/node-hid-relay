@@ -15,7 +15,6 @@ export const listHidRelayBoards = async ({
   fetchState = true,
 }: ListHidRelayBoardsOptions = {}): Promise<HidRelayBoard[]> => {
   // Get the devices from node-hid and filter out to only those which are known USB relay boards
-  // TODO: Add support for other relay types
   const devices = await HID.devicesAsync();
   const relayDevices = devices.filter((device) => {
     // DCTTech.com USB Relay
@@ -78,17 +77,36 @@ export const listHidRelayBoards = async ({
 };
 
 /**
+ * Find a device by the serial number
+ */
+export const findHidRelayBoardBySerialNumber = async (
+  serialNumber: string,
+): Promise<HidRelayBoard | undefined> => {
+  const boards = await listHidRelayBoards();
+  return boards.find((board) => board.serialNumber === serialNumber);
+};
+
+/**
  * Set the state of a relay on a HID relay board
  * Note: This function will not check that the relay index is valid as some relays do not report the number of relays available
  */
 export const setHidRelayState = async (
-  board: HidRelayBoardConnectionOptions,
+  boardConnectionOptions: HidRelayBoardConnectionOptions,
   relayIndex: number,
   state: boolean,
 ): Promise<void> => {
   let relay: HID.HIDAsync | undefined = undefined;
   try {
-    relay = await openHidDevice(board);
+    const device =
+      "serialNumber" in boardConnectionOptions
+        ? await findHidRelayBoardBySerialNumber(
+            boardConnectionOptions.serialNumber,
+          )
+        : boardConnectionOptions;
+    if (!device) {
+      throw new Error(`Unable to find board`);
+    }
+    relay = await openHidDevice(device);
     await relay.write([0x00, state ? COMMAND_ON : COMMAND_OFF, relayIndex + 1]);
   } finally {
     relay?.close();
@@ -99,7 +117,7 @@ export const setHidRelayState = async (
  * Set the serial number of a HID relay board
  */
 export const setHidRelaySerialNumber = async (
-  board: HidRelayBoardConnectionOptions,
+  boardConnectionOptions: HidRelayBoardConnectionOptions,
   serialNumber: string,
 ): Promise<void> => {
   let relay: HID.HIDAsync | undefined = undefined;
@@ -113,7 +131,16 @@ export const setHidRelaySerialNumber = async (
     fixedLengthSerialNumberBuffer.fill(0);
     serialNumberBuffer.copy(fixedLengthSerialNumberBuffer, 0, 0);
 
-    relay = await openHidDevice(board);
+    const device =
+      "serialNumber" in boardConnectionOptions
+        ? await findHidRelayBoardBySerialNumber(
+            boardConnectionOptions.serialNumber,
+          )
+        : boardConnectionOptions;
+    if (!device) {
+      throw new Error(`Unable to find board`);
+    }
+    relay = await openHidDevice(device);
     await relay.write([
       0x0,
       COMMAND_SET_SERIAL,

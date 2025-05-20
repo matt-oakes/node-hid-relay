@@ -40,6 +40,21 @@ for (const board of relayBoards) {
 }
 ```
 
+### Find a relay board by serial number
+
+Find the relay board with the given serial number. This will return the first board which matches or undefined if none are found.
+
+```ts
+import { findHidRelayBoardBySerialNumber } from "node-hid-relay";
+
+const board = await findHidRelayBoardBySerialNumber("BRD01");
+if (board) {
+  console.log(`Found board at path: ${board.path}`);
+} else {
+  console.log(`Not able to find board`);
+}
+```
+
 ### Set the state of a relay
 
 Set the state of a relay on a HID USB Relay board. Note that this function will not check that the relay index is valid as some relays do not report the number of relays available.
@@ -57,6 +72,20 @@ await setHidRelayState(relayBoards[0], 0, true);
 await setHidRelayState(relayBoards[0], 0, false);
 ```
 
+You can also avoid listing by passing in connection details directly:
+
+```ts
+await setHidRelayState({ serialNumber: "BRD01" }, 0, false);
+```
+
+```ts
+await setHidRelayState({ path: "DevSrvsID:4405099000" }, 0, false);
+```
+
+```ts
+await setHidRelayState({ vendorId: 0x16c0, productId: 0x05df }, 0, false);
+```
+
 ### Set the serial number of a relay board
 
 Set the serial number of a HID USB Relay board. Note that the serial number must contain only ascii characters and must be 5 characters or less.
@@ -69,6 +98,20 @@ const relayBoards = await listHidRelayBoards();
 
 // Set the serial number of the first relay board
 await setHidRelaySerialNumber(relayBoards[0], "BRD01");
+```
+
+You can also avoid listing by passing in connection details directly:
+
+```ts
+await setHidRelaySerialNumber({ serialNumber: "BRD01" }, "BRD02");
+```
+
+```ts
+await setHidRelaySerialNumber({ path: "DevSrvsID:4405099000" }, "BRD02");
+```
+
+```ts
+await setHidRelaySerialNumber({ vendorId: 0x16c0, productId: 0x05df }, "BRD02");
 ```
 
 ## Development

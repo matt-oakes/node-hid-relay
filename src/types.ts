@@ -15,10 +15,16 @@ export interface ListHidRelayBoardsOptions {
 /**
  * Options needed to connect to a HID relay board
  */
-export type HidRelayBoardConnectionOptions = Pick<
-  Device,
-  "path" | "vendorId" | "productId"
->;
+export type HidDeviceConnectionOptions =
+  | { path: string }
+  | { vendorId: number; productId: number };
+
+/**
+ * Options needed to connect to a HID relay board
+ */
+export type HidRelayBoardConnectionOptions =
+  | HidDeviceConnectionOptions
+  | { serialNumber: string };
 
 /**
  * The description of a HID relay board, including all of the known state

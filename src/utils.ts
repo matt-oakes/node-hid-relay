@@ -1,13 +1,13 @@
 import { Device, HIDAsync } from "node-hid";
-import { HidRelayBoardConnectionOptions } from "./types.js";
+import { HidDeviceConnectionOptions } from "./types.js";
 
 /**
  * Opens an Async HID connection to the relay board
  */
 export const openHidDevice = async (
-  device: HidRelayBoardConnectionOptions,
+  device: HidDeviceConnectionOptions,
 ): Promise<HIDAsync> => {
-  return device.path
+  return "path" in device
     ? await HIDAsync.open(device.path)
     : await HIDAsync.open(device.vendorId, device.productId);
 };
