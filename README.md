@@ -13,7 +13,13 @@ In theory these are supported, but untested as I don't have them:
 
 ## Usage
 
-TODO: Document
+### List all relay boards
+
+```ts
+import { listHidRelayBoards } from "node-hid-relay";
+
+const relayBoards = await listHidRelayBoards();
+```
 
 ## See Also
 
