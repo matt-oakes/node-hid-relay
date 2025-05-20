@@ -1,4 +1,4 @@
-# `node-hid-relay`
+# `hid-relay`
 
 A library which can control a USB relay device using the HID interface. It uses the [`node-hid`](https://github.com/node-hid/node-hid) library to communicate with the relay board so will work in Node.JS or Electron.
 
@@ -13,9 +13,9 @@ A library which can control a USB relay device using the HID interface. It uses 
 Install the library using your package manager of choice:
 
 ```bash
-npm install node-hid-relay
-pnpm add node-hid-relay
-yarn add node-hid-relay
+npm install hid-relay
+pnpm add hid-relay
+yarn add hid-relay
 ```
 
 Check the [`node-hid`](https://github.com/node-hid/node-hid) documentation for any additional setup you may need to do to use the library on your system. For example on Linux you may need to set udev rules to allow access to devices without root permissions.
