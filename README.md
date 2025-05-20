@@ -1,12 +1,26 @@
 # `node-hid-relay`
 
-A Node.JS library which can control a USB relay device using the HID interface.
+A library which can control a USB relay device using the HID interface. It uses the [`node-hid`](https://github.com/node-hid/node-hid) library to communicate with the relay board so will work in Node.JS or Electron.
 
 ## Supported Devices
 
 - DCTTech.com USB Relay Modules (2,4,6, or 8 relays)
   - Vendor ID: `0x16c0`
   - Product ID: `0x05df`
+
+## Installation
+
+Install the library using your package manager of choice:
+
+```bash
+npm install node-hid-relay
+pnpm add node-hid-relay
+yarn add node-hid-relay
+```
+
+Check the [`node-hid`](https://github.com/node-hid/node-hid) documentation for any additional setup you may need to do to use the library on your system. For example on Linux you may need to set udev rules to allow access to devices without root permissions.
+
+You may also need to perform additional setup to make sure this library works in Electron.
 
 ## Usage
 
@@ -56,6 +70,13 @@ const relayBoards = await listHidRelayBoards();
 // Set the serial number of the first relay board
 await setHidRelaySerialNumber(relayBoards[0], "BRD01");
 ```
+
+## Development
+
+- Run `pnpm install` to install the dependencies.
+- Run `pnpm build` to build the library.
+- Run `pnpm typecheck` to run the type checker.
+- Run `pnpm lint` to run the linter.
 
 ## See Also
 
