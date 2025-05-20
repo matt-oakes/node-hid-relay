@@ -54,4 +54,4 @@ jobs:
       - name: Build packages
         run: pnpm run build
       - name: Release packages
-        run: pnpm publish
+        run: pnpm publish --no-git-checks
